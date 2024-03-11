@@ -17,7 +17,7 @@ func UserChoice() (string, string) {
 	fmt.Println(`
 'sid' for subscription id 
 'eid' for external id
-'ex' for example
+'seg' for segment
 Leave blank for no filter`)
 	input, err := reader.ReadString('\n')
 	if err != nil {
@@ -29,8 +29,8 @@ Leave blank for no filter`)
 	switch trimmed {
 	//Add in more cases here for a user to type in "template id, eid, etc."
 
-	case "ex":
-		userId := searchByExample()
+	case "seg":
+		userId := searchBySegment()
 		return "ex", userId
 	case "sid":
 		userId := searchBySubId()
@@ -98,10 +98,10 @@ func searchBySubEid() string {
 	return userId
 }
 
-func searchByExample() string {
-	userId, exists := os.LookupEnv("EXAMPLE_INPUT")
+func searchBySegment() string {
+	userId, exists := os.LookupEnv("SEGMENT_NAME")
 	if !exists {
-		fmt.Println("Example Input not found, Please neter a new one : ")
+		fmt.Println("Segment name not found, Please neter a new one : ")
 
 		reader := bufio.NewReader(os.Stdin)
 		auth, err := reader.ReadString('\n')
@@ -111,14 +111,14 @@ func searchByExample() string {
 
 		userId = strings.TrimSpace(auth)
 
-		fmt.Printf("New example input set %s\n", userId)
+		fmt.Printf("Segment input set %s\n", userId)
 
 		//save the new AUTH_KEY to .env file
 
-		utils.SaveAuthKeyToFile("EXAMPLE_INPUT", userId)
+		utils.SaveAuthKeyToFile("SEGMENT_NAME", userId)
 
 	} else {
-		fmt.Printf("Example input found\n")
+		fmt.Printf("Segment found\n")
 	}
 	return userId
 }

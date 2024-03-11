@@ -109,31 +109,37 @@ func NoFilter(apiResp Notification.ApiResponse, writer *csv.Writer) {
 	}
 }
 
-func FilterByExample(apiResp Notification.ApiResponse, writer *csv.Writer) {
+func FilterBySegment(subId string, apiResp Notification.ApiResponse, writer *csv.Writer) {
 
 	for _, record := range apiResp.Notifications {
 
-		row := []string{
-			utils.StringOrNil(record.DelayedOption),
-			utils.StringOrNil(record.DeliveryTimeOfDay),
-			strconv.Itoa(record.Errored),
-			strconv.Itoa(record.Failed),
-			record.ID,
-			strings.Join(record.IncludePlayerIds, ";"),
-			strings.Join(record.IncludeExternalUserIds, ";"),
-			strings.Join(record.IncludeAliases, ";"),
-			strings.Join(record.IncludedSegments, ";"),
-			strconv.FormatInt(record.SendAfter, 10),
-			strconv.FormatInt(record.CompletedAt, 10),
-			strconv.Itoa(record.Successful),
-			utils.IntOrNilToString(record.Received),
-			utils.StringOrNil(record.TemplateId),
-			utils.SecondsToMinSec(record.CompletedAt - record.SendAfter),
-		}
+		segmentSearch := subId
+		segment := strings.Join(record.IncludedSegments, ";")
 
-		// Write the record's data as a row in the CSV file
-		if err := writer.Write(row); err != nil {
-			log.Fatalf("error writing record to CSV: %s", err)
+		if strings.Contains(segment, segmentSearch) {
+
+			row := []string{
+				utils.StringOrNil(record.DelayedOption),
+				utils.StringOrNil(record.DeliveryTimeOfDay),
+				strconv.Itoa(record.Errored),
+				strconv.Itoa(record.Failed),
+				record.ID,
+				strings.Join(record.IncludePlayerIds, ";"),
+				strings.Join(record.IncludeExternalUserIds, ";"),
+				strings.Join(record.IncludeAliases, ";"),
+				segment,
+				strconv.FormatInt(record.SendAfter, 10),
+				strconv.FormatInt(record.CompletedAt, 10),
+				strconv.Itoa(record.Successful),
+				utils.IntOrNilToString(record.Received),
+				utils.StringOrNil(record.TemplateId),
+				utils.SecondsToMinSec(record.CompletedAt - record.SendAfter),
+			}
+
+			// Write the record's data as a row in the CSV file
+			if err := writer.Write(row); err != nil {
+				log.Fatalf("error writing record to CSV: %s", err)
+			}
 		}
 	}
 }

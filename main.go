@@ -94,8 +94,8 @@ func main() {
 		fmt.Println(url)
 
 		switch param {
-		case "ex":
-			filters.FilterByExample(apiResp, writer)
+		case "seg":
+			filters.FilterBySegment(choiceValue, apiResp, writer)
 		case "sid":
 			filters.FilterById(choiceValue, apiResp, writer)
 		case "eid":
